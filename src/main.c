@@ -1439,7 +1439,7 @@ static void sfx_note2(uint8_t lo, uint8_t hi) {
  * measured as Cog pickup 47 ticks vs a plain-step baseline of 25
  * ticks. On a phone, where VBlank delivery can differ, that same
  * block is the only mechanism that can stretch into a long stall,
- * matching Cori's ~10s pickup freeze report. v5 therefore NEVER
+ * matching the ~10s pickup freeze report. v5 therefore NEVER
  * waits inside an SFX handler: multi-note SFX are flat step lists
  * (kind, lo, hi, dur-frames, ... , 0) advanced once per vblank
  * by sfx_step_seq() in the main loop. Single-note SFX (step,
@@ -1545,7 +1545,7 @@ static uint8_t sfx_gate_cross(uint8_t pair) {
      * v9 were the first-crossing jingle (17) and, on every
      * repeat, sfx_transition() — the old three-note rise
      * (id 12). That transition was the repeat-crossing sound
-     * Cori reported: forward, return, crypt, and Market gates
+     * Playtest reported: forward, return, crypt, and Market gates
      * all funnel through here, so every repeat played it.
      * Fixed: first crossing plays the jingle and returns 1
      * (banner); every later crossing plays NO gate sound at
