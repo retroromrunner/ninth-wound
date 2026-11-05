@@ -24,7 +24,7 @@ static const uint8_t AREA_H[12] = {16, 12, 12, 12, 12, 12, 12, 20, 20, 20, 20, 2
 /* Cell codes: '0' open, '1' stone/mossy wall, 'T' tree, 'R' rock,
  * 'G' gate to next area, 'B' return gate to previous area
  * (always open, v3), '3' final exit. */
-static const char *MAPS[12][20] = {
+static const char *MAPS[3][20] = {
     {   /* Area 0 v3: 16x16 Gatehouse. Spawn (1,1); spawn note (2,1);
          * Cog (13,2), Pin (3,13), Seal (12,13); statues (6,5)(10,5)
          * (8,7); statue note (7,4); levers west (2,10) middle (8,11)
@@ -46,24 +46,6 @@ static const char *MAPS[12][20] = {
         "1010101010100101",
         "1000001000000101",
         "1111111111111111",
-    },
-    {   /* Area 1: The Meadow, Silver Key at (5,5), gate (10,9).
-         * Border is a tree line, not stone; interior is wide open
-         * with scattered single-cell trees and rocks. v3: (1,1)
-         * is the return gate 'B' (gold, always open); entry is
-         * (2,1) facing east after the Dungeon gate. */
-        "TTTTTTTTTTTT",
-        "TB000000000T",
-        "T00T000R000T",
-        "T0000000000T",
-        "T0R00000T00T",
-        "T0000000000T",
-        "T000T0000R0T",
-        "T0000000000T",
-        "T00R000T000T",
-        "T000000000GT",
-        "T0000000000T",
-        "TTTTTTTTTTTT",
     },
     {   /* Area 2: Mossy Crypt, final exit (10,10), no key.
          * v3: (1,1) is the return gate 'B' (gold, always open);
@@ -89,59 +71,15 @@ static const char *MAPS[12][20] = {
         "111011000031",
         "111111111111",
     },
-    {   /* Area 3: Forest of Veins. Return B (1,1); valves west
-         * (3,5) north (6,2) east (9,5); note (5,5); NPC (4,8);
-         * barrier mechanism (6,9); gate G (10,9). (10,10) is a
-         * wall so the gate has no north approach (its arrival
-         * (1,0) in the Cathedral is a wall too). */
-        "TTTTTTTTTTTT",
-        "TB000000000T",
-        "T000T000000T",
-        "T00T000T000T",
-        "T0000000000T",
-        "T0000000000T",
-        "T000T000T00T",
-        "T0000000000T",
-        "T00T0000000T",
-        "T000000000GT",
-        "T000000000TT",
-        "TTTTTTTTTTTT",
-    },
-    {   /* Area 4: Cathedral of Teeth. Return B (1,1); bone
-         * columns west (3,5) east (9,5) north (6,2); note (5,5);
-         * NPC (4,8); skeletal mechanism (6,9); gate (10,9). */
-        "111111111111",
-        "1B0000000001",
-        "100000000001",
-        "100100100001",
-        "100000000001",
-        "100000000001",
-        "100100000001",
-        "100000000001",
-        "100001000001",
-        "1000000000G1",
-        "100000000011",
-        "111111111111",
-    },
-    {   /* Area 5: Blood River. Return B (1,1); river valves west
-         * (3,5) east (9,5) north (6,2); note (5,5); NPC (4,8);
-         * dock mechanism (6,9); gate (10,9). */
-        "111111111111",
-        "1B0000000001",
-        "100000000001",
-        "100100100001",
-        "100000000001",
-        "100000000001",
-        "100000100001",
-        "100000000001",
-        "100100000001",
-        "1000000000G1",
-        "100000000011",
-        "111111111111",
-    },
-    {   /* Area 6: Flesh Market. Return B (1,1) only, no forward
-         * gate; merchants (3,5) (9,5) (5,8); relic keeper (6,9);
-         * v7 Blood Amber pickup (10,10), southeast back corner. */
+    {   /* Area 6: Flesh Market. Return B (1,1); merchants (3,5)
+         * (9,5) (5,8); relic keeper (6,9); v7 Blood Amber pickup
+         * (10,10), southeast back corner. v11: a small maze in
+         * the southeast quadrant guards the Amber — walls at
+         * (8,7)(9,7), (7,8)(10,8), (8,10) force the player
+         * around the south edge ((7,10)->(7,9)->(8,9)->(9,9)
+         * ->(9,10)->(10,10)) past dead-end pockets at (7,7),
+         * (10,7) and (8,8)(9,8); the gate (10,9) stays
+         * reachable from (9,9). */
         "111111111111",
         "1B0000000001",
         "100000100001",
@@ -149,10 +87,10 @@ static const char *MAPS[12][20] = {
         "100100000001",
         "100000000001",
         "100000100001",
-        "100000000001",
-        "100100000001",
+        "100000001101",
+        "100100010011",
         "1000000000G1",
-        "100000000001",
+        "100000001001",
         "111111111111",
     },
 };
@@ -229,7 +167,7 @@ static const Ent ENTS0[9] = {
     {13, 2, ENT_PICKUP, IT_COG}, {3, 13, ENT_PICKUP, IT_PIN},
     {12, 13, ENT_PICKUP, IT_SEAL}, {6, 5, ENT_STATUE, 0},
     {10, 5, ENT_STATUE, 1}, {8, 7, ENT_STATUE, 2},
-    {5, 7, ENT_NOTE, 31}, {7, 4, ENT_NOTE, 4},
+    {5, 7, ENT_NOTE, 24}, {7, 4, ENT_NOTE, 4},
     {13, 8, ENT_MECH, 0},
 };
 /* Area 1 Ash Village: NPCs Elder(2,7) Merchant(5,2) Child(8,5)
@@ -248,7 +186,7 @@ static const Ent ENTS2[7] = {
     {3, 3, ENT_PICKUP, IT_GRAVE1}, {7, 5, ENT_PICKUP, IT_GRAVE2},
     {9, 7, ENT_PICKUP, IT_GRAVE3}, {5, 1, ENT_COFFIN, 0},
     {3, 9, ENT_COFFIN, 1}, {8, 3, ENT_EPITAPH, 0},
-    {5, 5, ENT_NOTE, 45},
+    {5, 5, ENT_NOTE, 38},
 };
 /* Area 3 Forest: valves west aux0 / north aux1 / east aux2 (order
  * north, west, east = LEVER_ORDER), note, NPC, barrier mechanism.
@@ -261,51 +199,54 @@ static const Ent ENTS2[7] = {
  * (10,10), east merchant (9,5) trades Amber for Pale Idol. */
 static const Ent ENTS3[7] = {
     {3, 5, ENT_LEVER, 0}, {6, 2, ENT_LEVER, 1}, {9, 5, ENT_LEVER, 2},
-    {5, 5, ENT_NOTE, 48}, {4, 8, ENT_NPC, 49}, {6, 9, ENT_MECH, 1},
+    {5, 5, ENT_NOTE, 39}, {4, 8, ENT_NPC, 40}, {6, 9, ENT_MECH, 1},
     {9, 2, ENT_CHAMBER, 0},
 };
 static const Ent ENTS4[7] = {
     {3, 5, ENT_COLUMN, 0}, {9, 5, ENT_COLUMN, 1}, {6, 2, ENT_COLUMN, 2},
-    {5, 5, ENT_NOTE, 53}, {4, 8, ENT_NPC, 54}, {6, 9, ENT_MECH, 2},
+    {5, 5, ENT_NOTE, 44}, {4, 8, ENT_NPC, 45}, {6, 9, ENT_MECH, 2},
     {9, 2, ENT_CHAMBER, 1},
 };
 static const Ent ENTS5[6] = {
     {3, 5, ENT_RVALVE, 0}, {6, 2, ENT_RVALVE, 1}, {9, 5, ENT_RVALVE, 2},
-    {5, 5, ENT_NOTE, 61}, {4, 8, ENT_NPC, 62}, {6, 9, ENT_MECH, 3},
+    {5, 5, ENT_NOTE, 52}, {4, 8, ENT_NPC, 53}, {6, 9, ENT_MECH, 3},
 };
 static const Ent ENTS6[6] = {
-    {3, 5, ENT_NPC, 69}, {9, 5, ENT_NPC, 70}, {5, 8, ENT_NPC, 71},
+    {3, 5, ENT_NPC, 60}, {9, 5, ENT_NPC, 61}, {5, 8, ENT_NPC, 62},
     {6, 9, ENT_MECH, 4}, {10, 10, ENT_PICKUP, IT_AMBER},
-    {2, 8, ENT_NPC, 98},
+    {2, 8, ENT_NPC, 74},
 };
 static const Ent ENTS7[6] = {
     {4, 4, ENT_WIND, 0}, {15, 4, ENT_WIND, 1}, {10, 16, ENT_WIND, 2},
-    {10, 10, ENT_NOTE, 103}, {4, 14, ENT_NPC, 104}, {10, 9, ENT_MECH, 5},
+    {10, 10, ENT_NOTE, 79}, {4, 14, ENT_NPC, 80}, {10, 9, ENT_MECH, 5},
 };
 static const Ent ENTS8[11] = {
     {3, 3, ENT_PICKUP, IT_BONE1}, {17, 3, ENT_PICKUP, IT_BONE2},
     {3, 17, ENT_PICKUP, IT_BONE3}, {17, 17, ENT_PICKUP, IT_BONE4},
     {10, 10, ENT_PICKUP, IT_GOLD},
     {6, 10, ENT_SPINE, 0}, {10, 6, ENT_SPINE, 1}, {14, 10, ENT_SPINE, 2},
-    {10, 14, ENT_NOTE, 108}, {10, 2, ENT_NPC, 109}, {10, 9, ENT_MECH, 6},
+    {10, 14, ENT_NOTE, 84}, {10, 2, ENT_NPC, 85}, {10, 9, ENT_MECH, 6},
 };
+/* v11: runes moved into the central plaza (7..12, 7..12) around
+ * the mechanism (10,9) — Birth (7,7), Peace (12,7), Dream (7,12),
+ * War (12,12). Order unchanged: Dream, Birth, War, Peace. */
 static const Ent ENTS9[8] = {
-    {4, 4, ENT_RUNE, 0}, {15, 4, ENT_RUNE, 1}, {10, 16, ENT_RUNE, 2},
-    {15, 15, ENT_RUNE, 3}, {10, 10, ENT_NOTE, 113},
-    {4, 14, ENT_NPC, 114}, {15, 10, ENT_NPC, 115}, {10, 9, ENT_MECH, 7},
+    {7, 7, ENT_RUNE, 0}, {12, 7, ENT_RUNE, 1}, {7, 12, ENT_RUNE, 2},
+    {12, 12, ENT_RUNE, 3}, {10, 10, ENT_NOTE, 89},
+    {4, 14, ENT_NPC, 90}, {15, 10, ENT_NPC, 91}, {10, 9, ENT_MECH, 7},
 };
 static const Ent ENTS10[7] = {
     {4, 4, ENT_ORGAN, 0}, {15, 4, ENT_ORGAN, 1}, {10, 16, ENT_ORGAN, 2},
-    {10, 10, ENT_NOTE, 119}, {4, 14, ENT_NPC, 120}, {10, 9, ENT_MECH, 8},
+    {10, 10, ENT_NOTE, 94}, {4, 14, ENT_NPC, 95}, {10, 9, ENT_MECH, 8},
     /* v10: Vein Organ hint note, right of the mechanism, so a
      * player arriving in Heart Chamber without the organ can
      * read where it is (Forest of Veins chamber, Bone Fork
      * lock) without leaving the area. */
-    {12, 9, ENT_NOTE, 128},
+    {12, 9, ENT_NOTE, 102},
 };
 static const Ent ENTS11[4] = {
     {10, 5, ENT_THRONE, 0}, {10, 9, ENT_MECH, 9},
-    {4, 14, ENT_NPC, 145}, {10, 14, ENT_NOTE, 146},
+    {4, 14, ENT_NPC, 107}, {10, 14, ENT_NOTE, 108},
 };
 static const Ent *ENTS[12] = {ENTS0, ENTS1, ENTS2, ENTS3, ENTS4, ENTS5, ENTS6, ENTS7, ENTS8, ENTS9, ENTS10, ENTS11};
 static const uint8_t ENT_COUNT[12] = {9, 8, 7, 7, 7, 6, 6, 6, 11, 8, 7, 4};
@@ -324,21 +265,69 @@ static const char *AREA_NAMES[12] = {"THE GATEHOUSE", "ASH VILLAGE", "THE BURIAL
     "THE THRONE"};
 static const uint8_t AREA_NAME_X[12] = {3, 4, 2, 2, 1, 4, 4, 4, 3, 4, 3, 3};
 
-/* v8: Areas 7-11 share one 20x20 layout, computed instead of
- * stored, because three more 20-row string tables would push
- * the ROM past 32KB. Border walls, return gate B (1,1),
- * pillars (6,6)(13,6)(6,13)(13,13), forward gate G (18,9)
- * for areas 7-10; Throne (11) has no forward gate. */
-static char new_area_cell(uint8_t area, uint8_t x, uint8_t y) {
-    if (x == 0 || x == 19 || y == 0 || y == 19) return '1';
-    if (x == 1 && y == 1) return 'B';
-    if ((x == 6 || x == 13) && (y == 6 || y == 13)) return '1';
-    if (area < 11 && x == 18 && y == 9) return 'G';
-    return '0';
-}
+/* v11: Areas 1, 3-5 (12x12) and 7-10 (20x20) are bit-packed
+ * wall maps — one bit per cell, 1 = wall — generated from the
+ * verified design grids (/tmp/gen_bits.py, which imports
+ * /tmp/design3.py and /tmp/design4.py). This replaced both the
+ * stored 12x12 tables and the run-table interpreter, which
+ * together overflowed plain 32KB: the bit decoder is one short
+ * function shared by all eight areas. B/G cells are open bits
+ * and are returned by map_char. Wall bits in areas 1 and 3 are
+ * trees ('T'); area 1 has a second plane marking its rocks
+ * ('R'); all other wall bits are stone ('1').
+ *  Lung (7): concentric rings + spokes spiralling to the
+ *   central plaza (mechanism (10,9), note (10,10)); vanes
+ *   (4,4)(15,4)(10,16) and NPC (4,14) sit on spokes.
+ *  Bone (8): horizontal/vertical wall segments with single
+ *   gaps — a classic branching maze; all seals, Gold, spines,
+ *   note, NPC, mechanism and gate stay reachable.
+ *  Memory (9): one long winding corridor (top, east, bottom,
+ *   west, mid, east-mid) into the central plaza (7..12, 7..12)
+ *   holding the four runes around the mechanism (10,9).
+ *  Heart (10): one long narrow serpentine corridor, ~110
+ *   steps from the return gate to the Throne gate, with the
+ *   note (10,10) and NPC (4,14) as hints along the way. */
+/* generated by /tmp/gen_bits.py — v11 bit-packed wall maps */
+static const uint8_t BITS_MID[4][18] = {
+    {0xFF, 0x1F, 0x80, 0x89, 0x18, 0x80, 0x05, 0x19, 0x80, 0x11, 0x1A, 0x80, 0x89, 0x18, 0x80, 0x01, 0xF8, 0xFF},  /* area 1 */
+    {0xFF, 0x1F, 0x80, 0x11, 0x98, 0x88, 0x01, 0x18, 0x80, 0x11, 0x19, 0x80, 0x09, 0x18, 0x80, 0x01, 0xFC, 0xFF},  /* area 3 */
+    {0xFF, 0x1F, 0x80, 0x01, 0x98, 0x84, 0x01, 0x18, 0x80, 0x09, 0x18, 0x80, 0x21, 0x18, 0x80, 0x01, 0xFC, 0xFF},  /* area 4 */
+    {0xFF, 0x1F, 0x80, 0x01, 0x98, 0x84, 0x01, 0x18, 0x80, 0x41, 0x18, 0x80, 0x09, 0x18, 0x80, 0x01, 0xFC, 0xFF},  /* area 5 */
+};
+static const uint8_t BITS_ROCK[18] = {
+    0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x02, 0x00,
+    0x08, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
+static const uint8_t BITS_BIG[5][50] = {
+    {0xFF, 0xFF, 0x9F, 0xFF, 0xFF, 0x01, 0x00, 0xBC, 0xFE, 0xD7, 0xEB, 0x7F, 0xBD, 0x01, 0xD8, 0xDB, 0xBE, 0xBD, 0xED, 0xDB, 0xDB, 0xB0, 0x3D, 0x0C, 0x9B, 0xDB, 0xB0, 0xBD, 0x0D, 0xDB, 0xDB, 0xBF, 0xBD, 0xFD, 0xDB, 0x0B, 0x80, 0xBD, 0xFE, 0xDF, 0xEB, 0xFB, 0x3D, 0x00, 0xC0, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},  /* area 7 */
+    {0xFF, 0xFF, 0x1F, 0x00, 0x80, 0x01, 0x40, 0x18, 0x00, 0x84, 0xFD, 0xFD, 0x19, 0x04, 0x80, 0x41, 0x00, 0x18, 0x04, 0x80, 0xD9, 0xFF, 0x1B, 0x00, 0x81, 0x01, 0x10, 0x18, 0x00, 0x81, 0xFD, 0xEB, 0x18, 0x21, 0x88, 0x11, 0x82, 0x18, 0x21, 0x88, 0x71, 0xFF, 0x1B, 0x00, 0x80, 0x01, 0x00, 0xF8, 0xFF, 0xFF},  /* area 8 */
+    {0xFF, 0xFF, 0x9F, 0xFF, 0xFF, 0x03, 0x00, 0xFC, 0xFF, 0xDF, 0xFF, 0xFF, 0x7D, 0x00, 0xD8, 0xF7, 0xBF, 0x7D, 0x07, 0xDA, 0x77, 0xA0, 0x7D, 0x07, 0x98, 0x77, 0x20, 0x7C, 0x07, 0xDA, 0x77, 0xA0, 0x7D, 0xFF, 0xDF, 0xE7, 0xFF, 0x7D, 0xFF, 0xDF, 0x07, 0x00, 0xFC, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},  /* area 9 */
+    {0xFF, 0xFF, 0x1F, 0x00, 0x80, 0xFF, 0xFF, 0xFB, 0xFF, 0xBF, 0x03, 0x00, 0xB8, 0xFF, 0xFF, 0xFB, 0xFF, 0x3F, 0x00, 0xC0, 0xFF, 0xFF, 0xFD, 0x3F, 0x80, 0xFF, 0xFB, 0xFF, 0xBF, 0xFF, 0x07, 0xF8, 0x7F, 0xFF, 0xFF, 0xE7, 0xFF, 0x7F, 0x00, 0xE0, 0x07, 0x00, 0xFE, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},  /* area 10 */
+    {0xFF, 0xFF, 0x1F, 0x00, 0x80, 0x01, 0x00, 0x18, 0x00, 0x80, 0x01, 0x00, 0x18, 0x00, 0x80, 0x41, 0x20, 0x18, 0x00, 0x80, 0x01, 0x00, 0x18, 0x00, 0x80, 0x01, 0x00, 0x18, 0x00, 0x80, 0x01, 0x00, 0x18, 0x04, 0x82, 0x01, 0x00, 0x18, 0x00, 0x80, 0x01, 0x00, 0x18, 0x00, 0x80, 0x01, 0x00, 0xF8, 0xFF, 0xFF},  /* area 11 */
+};
+
 static char map_char(uint8_t area, uint8_t x, uint8_t y) {
-    if (area >= 7) return new_area_cell(area, x, y);
-    return MAPS[area][y][x];
+    const uint8_t *b;
+    uint16_t i;
+    if (area == 0) return MAPS[0][y][x];
+    if (area == 2) return MAPS[1][y][x];
+    if (area == 6) return MAPS[2][y][x];
+    if (x == 1 && y == 1) return 'B';
+    if (area < 7) {
+        if (x == 10 && y == 9) return 'G';
+        i = (uint16_t)y * 12 + x;
+        if (area == 1) {
+            if ((BITS_ROCK[i >> 3] >> (i & 7)) & 1) return 'R';
+            b = BITS_MID[0];
+        } else b = BITS_MID[area - 2];
+        if ((b[i >> 3] >> (i & 7)) & 1) return (area == 3 || area == 1) ? 'T' : '1';
+        return '0';
+    }
+    if (area < 11 && x == 18 && y == 9) return 'G';
+    i = (uint16_t)y * 20 + x;
+    b = BITS_BIG[area - 7];
+    if ((b[i >> 3] >> (i & 7)) & 1) return '1';
+    return '0';
 }
 static uint8_t cell_at(uint8_t area, int8_t x, int8_t y) {
     char c;
@@ -1117,21 +1106,16 @@ static void draw_minimap(void) {
  * satisfies x + length <= 20. Closing restores the full view
  * with one render_one_frame() call. */
 /* Dialog lines: 32 dialogs x 4 lines, each line x+len<=20 (x=1). */
-static const char *DIALOGS[147][4] = {
+static const char *DIALOGS[109][4] = {
     {"THE BELLS SING:", "WEST, THEN EAST,", "THEN NORTH.", ""},
     {"THE TOWER SLEEPS", "UNTIL THE BELLS", "ARE RUNG TRUE.", ""},
     {"GRANDFATHER SAYS", "THE SKY WAS NOT", "ALWAYS RED.", ""},
     {"THE BREATHING IS", "LOUDER THIS YEAR.", "NOBODY ELSE SEEMS", "CONCERNED."},
     {"THE DEAD FACE", "THE GATE.", "", ""},
-    {"", "", "", ""},
     {"THE STATUES TURN", "TO FACE THE GATE.", "", ""},
-    {"", "", "", ""},
     {"THE LEVERS GROAN.", "THE ORDER RESETS.", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
     {"THE GATE NEEDS:", "COG, PIN, SEAL.", "", ""},
     {"THE STATUES STILL", "TURN AWAY.", "", ""},
-    {"", "", "", ""},
     {"THE BRONZE SIGIL", "CLICKS INTO PLACE.", "", ""},
     {"THE BELL RINGS.", "", "", ""},
     {"THE BELLS FALL", "SILENT, OUT OF", "ORDER.", ""},
@@ -1146,8 +1130,6 @@ static const char *DIALOGS[147][4] = {
     {"THE CRYPT IS SEALED.", "THREE GRAVE SEALS", "ARE NEEDED.", ""},
     {"THE COFFINS STILL", "FACE AWAY FROM", "THE PULSE.", ""},
     {"THE FINAL DOOR", "NEEDS THE EPITAPH", "CODE.", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
     {"THE GATE MECHANISM", "ALREADY RUNS.", "", ""},
     {"THE GATE IS BROKEN.", "FIND COG, PIN, SEAL.", "TURN THE STATUES.", ""},
     {"THE STATUE TURNS", "TO FACE EAST.", "", ""},
@@ -1164,8 +1146,6 @@ static const char *DIALOGS[147][4] = {
     {"WHERE ARE YOU?", "HOW DID YOU", "GET HERE?", ""},
     {"EXPLORE. FIND", "THE GATES.", "GO DEEPER.", ""},
     {"THE PULSE FLOWS", "SOUTH THROUGH", "THE BODY.", "FACE THE PULSE."},
-    {"", "", "", ""},
-    {"", "", "", ""},
     {"VALVES SING:", "NORTH, THEN WEST,", "THEN EAST.", ""},
     {"THE ROOTS DRINK", "WHERE THE VALVES", "POINT THEM.", ""},
     {"THE BARRIER", "HOLDS. SET THE", "VALVES FIRST.", ""},
@@ -1190,30 +1170,15 @@ static const char *DIALOGS[147][4] = {
     {"THE EAST MERCHANT", "TRADES FOR RARE", "GOODS. SEEK HIM.", ""},
     {"THE THIEF WEARS", "A BONE RING.", "", ""},
     {"BRING BLOOD AMBER", "TO THE EAST", "MERCHANT.", ""},
-    {"", "", "", ""},
     {"THE TRADE IS MADE.", "THE EYE LENS", "SEES TRUE.", ""},
     {"THE LENS IS", "YOURS.", "", ""},
-    {"", "", "", ""},
     {"SEVEN, THREE, NINE.", "THE CRYPT OPENS.", "ANCIENT KEY FRAG", "MENT FOUND."},
     {"THE VALVES ARE", "ALREADY SET.", "", ""},
-    {"", "", "", ""},
     {"THE VALVES HUM.", "THE BARRIER", "SHUDDERS.", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
     {"I TRADE ONLY FOR", "BLOOD AMBER.", "BRING ME SOME.", ""},
     {"THE AMBER IS", "MINE. TAKE THIS", "PALE IDOL.", ""},
     {"I WAIT FOR THE", "PALE IDOL.", "BRING IT TO ME.", ""},
     {"THE IDOL IS", "YOURS NOW.", "TRADE COMPLETE.", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
     {"NEEDS BONE", "TUNING FORK.", "", ""},
     {"VEIN ORGAN", "FOUND.", "", ""},
     {"I SELL THE", "MKT KEY", "FOR GOLD.", ""},
@@ -1228,41 +1193,27 @@ static const char *DIALOGS[147][4] = {
     {"LUNG BELLOWS", "FOUND.", "", ""},
     {"SPINE POINTS", "NORTH.", "", ""},
     {"FOUR SEALS,", "TRUE SPINE.", "", ""},
-    {"SEALS AND SPINE", "MUST BE TRUE.", ""},
+    {"SEALS AND SPINE", "MUST BE TRUE.", "", ""},
     {"ALREADY HAVE IT.", "", "", ""},
     {"SILVER SIGIL", "FOUND.", "", ""},
     {"MEMORIES IN", "ORDER: DREAM,", "BIRTH, WAR,", "PEACE."},
     {"RECORDS LIE.", "", "", ""},
     {"TRUST RECORDS.", "", "", ""},
     {"SET MEMORIES", "FIRST.", "", ""},
-    {"", "", "", ""},
     {"HEART SEAL", "FOUND.", "", ""},
     {"ORGANS BEAT:", "WEST, NORTH,", "THEN EAST.", ""},
-    {"NEEDS HEART", "AND MARKET KEY.", ""},
+    {"NEEDS HEART", "AND MARKET KEY.", "", ""},
     {"SET ORGANS", "FIRST.", "", ""},
     {"NEEDS VEIN", "ORGAN. FOREST", "OF VEINS.", "BONE TUNING FORK."},
-    {"", "", "", ""},
     {"HEART KEY", "FOUND.", "", ""},
     {"STILL MISSING.", "", "", ""},
     {"NINTH KEY FOUND.", "", "", ""},
     {"BRING NINTH KEY.", "", "", ""},
     {"VEIN ORGAN:", "FOREST OF VEINS", "CHAMBER.", "BONE TUNING FORK."},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
     {"IT SHIFTS.", "", "", ""},
     {"THEY ALIGN.", "", "", ""},
     {"THE ORDER RESETS.", "", "", ""},
     {"ALREADY SET.", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
-    {"", "", "", ""},
     {"IT DREAMS.", "", "", ""},
     {"IT DREAMS HERE.", "", "", ""},
 };
@@ -1311,14 +1262,15 @@ static void draw_dialog_lines(uint8_t d) {
 
 /* v10 Memory Vault rune labels. Runes share one billboard
  * set, so their identity was invisible: the generic sequence
- * dialogs (133-136) never named the rune. Now every rune
- * interaction draws "<NAME> RUNE" + its status, reusing the
- * generic status strings (133 IT SHIFTS / 134 THEY ALIGN /
- * 135 THE ORDER RESETS / 136 ALREADY SET) so no new dialog
- * strings are needed. Rune proof 'R','N',aux,status,checksum
- * lets QA prove the label matched the rune toggled.
- * aux->name: 0 Birth (4,4), 1 Peace (15,4), 2 Dream (10,16),
- * 3 War (15,15) — the order hint (Dream, Birth, War, Peace)
+ * dialogs (103-106 after the v11 compaction) never named the
+ * rune. Now every rune interaction draws "<NAME> RUNE" + its
+ * status, reusing the generic status strings (103 IT SHIFTS /
+ * 104 THEY ALIGN / 105 THE ORDER RESETS / 106 ALREADY SET) so
+ * no new dialog strings are needed. Rune proof 'R','N',aux,
+ * status,checksum lets QA prove the label matched the rune
+ * toggled.
+ * aux->name: 0 Birth (7,7), 1 Peace (12,7), 2 Dream (7,12),
+ * 3 War (12,12) — the order hint (Dream, Birth, War, Peace)
  * is still solved from these labels + the NPC hint. */
 static const char *RUNE_NAMES[4] = {"BIRTH", "PEACE", "DREAM", "WAR"};
 static uint8_t rune_proof[5];
@@ -1335,7 +1287,7 @@ static void draw_rune_dialog(uint8_t aux, uint8_t status) {
     while (n[i]) { line[i] = n[i]; i++; }
     line[i++] = ' '; line[i++] = 'R'; line[i++] = 'U'; line[i++] = 'N'; line[i++] = 'E'; line[i] = 0;
     put_text(1, 10, line, 6);
-    put_text(1, 11, DIALOGS[133 + status][0], 6);
+    put_text(1, 11, DIALOGS[103 + status][0], 6);
     put_text(2, 16, "PRESS A TO CLOSE", 6);
     DISPLAY_ON;
 }
@@ -1439,7 +1391,7 @@ static void sfx_note2(uint8_t lo, uint8_t hi) {
  * measured as Cog pickup 47 ticks vs a plain-step baseline of 25
  * ticks. On a phone, where VBlank delivery can differ, that same
  * block is the only mechanism that can stretch into a long stall,
- * matching the ~10s pickup freeze report. v5 therefore NEVER
+ * matching the ~10s pickup freeze report from playtesting. v5 therefore NEVER
  * waits inside an SFX handler: multi-note SFX are flat step lists
  * (kind, lo, hi, dur-frames, ... , 0) advanced once per vblank
  * by sfx_step_seq() in the main loop. Single-note SFX (step,
@@ -1545,7 +1497,7 @@ static uint8_t sfx_gate_cross(uint8_t pair) {
      * v9 were the first-crossing jingle (17) and, on every
      * repeat, sfx_transition() — the old three-note rise
      * (id 12). That transition was the repeat-crossing sound
-     * Playtest reported: forward, return, crypt, and Market gates
+     * reported in playtesting: forward, return, crypt, and Market gates
      * all funnel through here, so every repeat played it.
      * Fixed: first crossing plays the jingle and returns 1
      * (banner); every later crossing plays NO gate sound at
@@ -1910,23 +1862,23 @@ static int8_t billboard_fwd(int8_t tx, int8_t ty) {
 /* v8 shared sequence puzzle (wind/runes/organs): order array,
  * length, index/done state, optional pulled-visual array, and
  * bell (runes) vs lever (wind/organs) step sound. Dialogs are
- * the shared generic set: 133 step, 134 solved, 135 wrong,
- * 136 already set. */
+ * the shared generic set: 103 step, 104 solved, 105 wrong,
+ * 106 already set. */
 static void seq_interact(uint8_t *idxp, uint8_t *donep, const uint8_t *order,
         uint8_t len, uint8_t aux, uint8_t *pulled, uint8_t bell) {
-    if (*donep) { draw_dialog_lines(136); sfx_talk(); }
+    if (*donep) { draw_dialog_lines(106); sfx_talk(); }
     else if (aux == order[*idxp]) {
         if (pulled) pulled[aux] = 1;
         (*idxp)++;
-        if (*idxp >= len) { *donep = 1; draw_dialog_lines(134); }
-        else draw_dialog_lines(133);
+        if (*idxp >= len) { *donep = 1; draw_dialog_lines(104); }
+        else draw_dialog_lines(103);
         if (bell) sfx_bell((uint8_t)(aux % 3));
         else sfx_lever();
         if (*donep) sfx_solved();
     } else {
         *idxp = 0;
         if (pulled) { pulled[0] = 0; pulled[1] = 0; pulled[2] = 0; }
-        draw_dialog_lines(135);
+        draw_dialog_lines(105);
         if (bell) sfx_bell((uint8_t)(aux % 3));
         else sfx_lever();
     }
@@ -2021,7 +1973,7 @@ void main(void) {
                 intro_proof[3] = (uint8_t)('I' + 'M' + 1);
                 intro_idx = 0;
                 state = ST_INTRO;
-                draw_intro_lines(40);
+                draw_intro_lines(33);
             }
         } else if (state == ST_CHOICE) {
             if (pressed & J_START) {
@@ -2118,7 +2070,7 @@ void main(void) {
                     crypt_open = 1;
                     state = ST_TALK;
                     ch_count = 0;
-                    draw_dialog_lines(76);
+                    draw_dialog_lines(65);
                     sfx_gate_unlock(); sfx_reward();
                 } else {
                     code_digit[0] = 0; code_digit[1] = 0; code_digit[2] = 0;
@@ -2139,7 +2091,7 @@ void main(void) {
             } else if (pressed & J_A) {
                 if (intro_idx < 4) {
                     intro_idx++;
-                    draw_intro_lines((uint8_t)(40 + intro_idx));
+                    draw_intro_lines((uint8_t)(33 + intro_idx));
                 } else {
                     state = ST_PLAY;
                     g_state = 1;
@@ -2196,23 +2148,23 @@ void main(void) {
                      * Amber: Amber is removed, Idol is added,
                      * trader_done set (dialog 83 + trade SFX).
                      * After the trade: dialog 85. */
-                    if (e->kind == ENT_NPC && g_area == 6 && e->aux == 98) {
+                    if (e->kind == ENT_NPC && g_area == 6 && e->aux == 74) {
                         /* v8 backtrack B: Gold Ingot (Bone Labyrinth)
                          * buys the Market Key from this merchant. */
-                        if (item_held(IT_MARKETKEY)) { draw_dialog_lines(100); sfx_talk(); }
+                        if (item_held(IT_MARKETKEY)) { draw_dialog_lines(76); sfx_talk(); }
                         else if (item_held(IT_GOLD)) {
                             g_items = (uint32_t)(g_items & (uint32_t)~(1UL << IT_GOLD));
                             g_items = (uint32_t)(g_items | (1UL << IT_MARKETKEY));
-                            draw_dialog_lines(99); sfx_gate_unlock(); sfx_reward();
-                        } else { draw_dialog_lines(98); sfx_talk(); }
-                    } else if (e->kind == ENT_NPC && g_area == 6 && e->aux == 70) {
-                        if (trader_done) { draw_dialog_lines(85); sfx_talk(); }
+                            draw_dialog_lines(75); sfx_gate_unlock(); sfx_reward();
+                        } else { draw_dialog_lines(74); sfx_talk(); }
+                    } else if (e->kind == ENT_NPC && g_area == 6 && e->aux == 61) {
+                        if (trader_done) { draw_dialog_lines(71); sfx_talk(); }
                         else if (item_held(IT_AMBER)) {
                             g_items = (uint32_t)(g_items & (uint32_t)~(1UL << IT_AMBER));
                             g_items = (uint32_t)(g_items | (1 << IT_IDOL));
                             trader_done = 1;
-                            draw_dialog_lines(83); sfx_gate_unlock(); sfx_reward();
-                        } else { draw_dialog_lines(82); sfx_talk(); }
+                            draw_dialog_lines(69); sfx_gate_unlock(); sfx_reward();
+                        } else { draw_dialog_lines(68); sfx_talk(); }
                     } else {
                         draw_dialog_lines(e->aux);
                         sfx_talk();
@@ -2221,11 +2173,11 @@ void main(void) {
                      * that merchant's clue (dialogs 69-71). In
                      * v7 the clues point to the trader; they no
                      * longer gate the Keeper trade. */
-                    if (e->kind == ENT_NPC && g_area == 6 && e->aux >= 69 && e->aux <= 71)
-                        merchant_clues = (uint8_t)(merchant_clues | (1 << (e->aux - 69)));
+                    if (e->kind == ENT_NPC && g_area == 6 && e->aux >= 60 && e->aux <= 62)
+                        merchant_clues = (uint8_t)(merchant_clues | (1 << (e->aux - 60)));
                 } else if (e->kind == ENT_STATUE) {
                     statue_face[e->aux] = (uint8_t)(statue_face[e->aux] + 64);
-                    draw_dialog_lines(statues_solved() ? 6 : (uint8_t)(32 + (statue_face[e->aux] >> 6)));
+                    draw_dialog_lines(statues_solved() ? 5 : (uint8_t)(25 + (statue_face[e->aux] >> 6)));
                     /* v5: statue completion grinds like stone, it
                      * does NOT play the rising ping. Coffins and
                      * bells keep SEQ_SOLVED; only statues grind. */
@@ -2233,56 +2185,56 @@ void main(void) {
                     else sfx_rotate(0);
                 } else if (e->kind == ENT_COFFIN) {
                     coffin_face[e->aux] = (uint8_t)(coffin_face[e->aux] + 64);
-                    draw_dialog_lines(coffins_solved() ? 24 : (uint8_t)(36 + (coffin_face[e->aux] >> 6)));
+                    draw_dialog_lines(coffins_solved() ? 19 : (uint8_t)(29 + (coffin_face[e->aux] >> 6)));
                     sfx_rotate(1);
                     if (coffins_solved()) sfx_solved();
                 } else if (e->kind == ENT_LEVER) {
                     /* v6 Forest valves: order north, west, east. */
-                    if (lever_done) { draw_dialog_lines(77); sfx_talk(); }
+                    if (lever_done) { draw_dialog_lines(66); sfx_talk(); }
                     else if (e->aux == LEVER_ORDER[lever_idx]) {
                         lever_pulled[e->aux] = 1;
                         lever_idx++;
-                        if (lever_idx >= 3) { lever_done = 1; draw_dialog_lines(79); }
-                        else draw_dialog_lines(63);
+                        if (lever_idx >= 3) { lever_done = 1; draw_dialog_lines(67); }
+                        else draw_dialog_lines(54);
                         sfx_lever();
                         if (lever_done) sfx_solved();
-                    } else { lever_idx = 0; draw_dialog_lines(64); sfx_lever(); }
+                    } else { lever_idx = 0; draw_dialog_lines(55); sfx_lever(); }
                 } else if (e->kind == ENT_COLUMN) {
                     /* v6 Cathedral bone columns: order north
                      * (high), west (low), east (middle). */
-                    if (bone_done) { draw_dialog_lines(57); sfx_talk(); }
+                    if (bone_done) { draw_dialog_lines(48); sfx_talk(); }
                     else if (e->aux == BONE_ORDER[bone_idx]) {
                         bone_idx++;
-                        if (bone_idx >= 3) { bone_done = 1; draw_dialog_lines(57); }
-                        else draw_dialog_lines(55);
+                        if (bone_idx >= 3) { bone_done = 1; draw_dialog_lines(48); }
+                        else draw_dialog_lines(46);
                         sfx_bell(e->aux);
                         if (bone_done) sfx_solved();
-                    } else { bone_idx = 0; draw_dialog_lines(56); sfx_bell(e->aux); }
+                    } else { bone_idx = 0; draw_dialog_lines(47); sfx_bell(e->aux); }
                 } else if (e->kind == ENT_RVALVE) {
                     /* v6 River valves: order west, east, north. */
-                    if (flow_done) { draw_dialog_lines(65); sfx_talk(); }
+                    if (flow_done) { draw_dialog_lines(56); sfx_talk(); }
                     else if (e->aux == FLOW_ORDER[flow_idx]) {
                         river_pulled[e->aux] = 1;
                         flow_idx++;
-                        if (flow_idx >= 3) { flow_done = 1; draw_dialog_lines(65); }
-                        else draw_dialog_lines(63);
+                        if (flow_idx >= 3) { flow_done = 1; draw_dialog_lines(56); }
+                        else draw_dialog_lines(54);
                         sfx_lever();
                         if (flow_done) sfx_solved();
-                    } else { flow_idx = 0; draw_dialog_lines(64); sfx_lever(); }
+                    } else { flow_idx = 0; draw_dialog_lines(55); sfx_lever(); }
                 } else if (e->kind == ENT_BELL) {
-                    if (bell_done) { draw_dialog_lines(18); sfx_talk(); }
+                    if (bell_done) { draw_dialog_lines(13); sfx_talk(); }
                     else if (e->aux == BELL_ORDER[bell_idx]) {
                         bell_idx++;
-                        if (bell_idx >= 3) { bell_done = 1; draw_dialog_lines(17); }
-                        else draw_dialog_lines(15);
+                        if (bell_idx >= 3) { bell_done = 1; draw_dialog_lines(12); }
+                        else draw_dialog_lines(10);
                         sfx_bell(e->aux);
                         if (bell_done) sfx_solved();
-                    } else { bell_idx = 0; draw_dialog_lines(16); sfx_bell(e->aux); }
+                    } else { bell_idx = 0; draw_dialog_lines(11); sfx_bell(e->aux); }
                 } else if (e->kind == ENT_WIND) {
                     seq_interact(&wind_idx, &wind_done, WIND_ORDER, 3, e->aux, wind_pulled, 0);
                 } else if (e->kind == ENT_SPINE) {
                     spine_face[e->aux] = (uint8_t)(spine_face[e->aux] + 64);
-                    draw_dialog_lines(spine_solved() ? 134 : 133);
+                    draw_dialog_lines(spine_solved() ? 104 : 103);
                     if (spine_solved()) sfx_solved();
                     else sfx_rotate(0);
                 } else if (e->kind == ENT_RUNE) {
@@ -2298,14 +2250,14 @@ void main(void) {
                     seq_interact(&organ_idx, &organ_done, ORGAN_ORDER, 3, e->aux, organ_pulled, 0);
                 } else if (e->kind == ENT_CHAMBER) {
                     if (e->aux == 0) {
-                        if (!item_held(IT_FORK)) { draw_dialog_lines(96); sfx_talk(); }
-                        else { g_items = (uint32_t)(g_items | (1UL << IT_ORGAN)); draw_dialog_lines(97); sfx_gate_unlock(); sfx_reward(); }
+                        if (!item_held(IT_FORK)) { draw_dialog_lines(72); sfx_talk(); }
+                        else { g_items = (uint32_t)(g_items | (1UL << IT_ORGAN)); draw_dialog_lines(73); sfx_gate_unlock(); sfx_reward(); }
                     } else {
-                        if (!item_held(IT_LUNG)) { draw_dialog_lines(101); sfx_talk(); }
-                        else { g_items = (uint32_t)(g_items | (1UL << IT_THREAD)); draw_dialog_lines(102); sfx_gate_unlock(); sfx_reward(); }
+                        if (!item_held(IT_LUNG)) { draw_dialog_lines(77); sfx_talk(); }
+                        else { g_items = (uint32_t)(g_items | (1UL << IT_THREAD)); draw_dialog_lines(78); sfx_gate_unlock(); sfx_reward(); }
                     }
                 } else if (e->kind == ENT_THRONE) {
-                    if (!item_held(IT_NINTH)) { draw_dialog_lines(127); sfx_talk(); }
+                    if (!item_held(IT_NINTH)) { draw_dialog_lines(101); sfx_talk(); }
                     else {
                         state = ST_CHOICE;
                         g_state = 9;
@@ -2315,22 +2267,22 @@ void main(void) {
                     }
                 } else if (e->kind == ENT_MECH) {
                     if (e->aux == 0) {
-                        if (item_held(IT_SIGIL)) { draw_dialog_lines(30); sfx_talk(); }
-                        else if (!item_held(IT_COG) || !item_held(IT_PIN) || !item_held(IT_SEAL)) { draw_dialog_lines(11); sfx_talk(); }
-                        else if (!statues_solved()) { draw_dialog_lines(12); sfx_talk(); }
-                        else { g_items = (uint32_t)(g_items | (1 << IT_SIGIL)); draw_dialog_lines(14); sfx_gate_unlock(); sfx_reward(); }
+                        if (item_held(IT_SIGIL)) { draw_dialog_lines(23); sfx_talk(); }
+                        else if (!item_held(IT_COG) || !item_held(IT_PIN) || !item_held(IT_SEAL)) { draw_dialog_lines(7); sfx_talk(); }
+                        else if (!statues_solved()) { draw_dialog_lines(8); sfx_talk(); }
+                        else { g_items = (uint32_t)(g_items | (1 << IT_SIGIL)); draw_dialog_lines(9); sfx_gate_unlock(); sfx_reward(); }
                     } else if (e->aux == 1) {
-                        if (item_held(IT_BLOOD)) { draw_dialog_lines(51); sfx_talk(); }
-                        else if (!lever_done) { draw_dialog_lines(50); sfx_talk(); }
-                        else { g_items = (uint32_t)(g_items | (1 << IT_BLOOD)); draw_dialog_lines(52); sfx_gate_unlock(); sfx_reward(); }
+                        if (item_held(IT_BLOOD)) { draw_dialog_lines(42); sfx_talk(); }
+                        else if (!lever_done) { draw_dialog_lines(41); sfx_talk(); }
+                        else { g_items = (uint32_t)(g_items | (1 << IT_BLOOD)); draw_dialog_lines(43); sfx_gate_unlock(); sfx_reward(); }
                     } else if (e->aux == 2) {
-                        if (item_held(IT_FORK)) { draw_dialog_lines(60); sfx_talk(); }
-                        else if (!bone_done) { draw_dialog_lines(58); sfx_talk(); }
-                        else { g_items = (uint32_t)(g_items | (1 << IT_FORK)); draw_dialog_lines(59); sfx_gate_unlock(); sfx_reward(); }
+                        if (item_held(IT_FORK)) { draw_dialog_lines(51); sfx_talk(); }
+                        else if (!bone_done) { draw_dialog_lines(49); sfx_talk(); }
+                        else { g_items = (uint32_t)(g_items | (1 << IT_FORK)); draw_dialog_lines(50); sfx_gate_unlock(); sfx_reward(); }
                     } else if (e->aux == 3) {
-                        if (item_held(IT_RIVER)) { draw_dialog_lines(68); sfx_talk(); }
-                        else if (!flow_done) { draw_dialog_lines(66); sfx_talk(); }
-                        else { g_items = (uint32_t)(g_items | (1 << IT_RIVER)); draw_dialog_lines(67); sfx_gate_unlock(); sfx_reward(); }
+                        if (item_held(IT_RIVER)) { draw_dialog_lines(59); sfx_talk(); }
+                        else if (!flow_done) { draw_dialog_lines(57); sfx_talk(); }
+                        else { g_items = (uint32_t)(g_items | (1 << IT_RIVER)); draw_dialog_lines(58); sfx_gate_unlock(); sfx_reward(); }
                     } else if (e->aux == 4) {
                         /* v7 Market keeper: a real item trade.
                          * Clues alone (v6 path) no longer grant
@@ -2339,9 +2291,9 @@ void main(void) {
                          * Idol is removed, Eye Lens is added,
                          * and the game ends (pending_done
                          * turns the dialog close into ST_DONE). */
-                        if (item_held(IT_LENS)) { draw_dialog_lines(74); sfx_talk(); }
-                        else if (!item_held(IT_IDOL)) { draw_dialog_lines(84); sfx_talk(); }
-                        else { g_items = (uint32_t)(g_items & (uint32_t)~(1UL << IT_IDOL)); g_items = (uint32_t)(g_items | (1 << IT_LENS)); draw_dialog_lines(73); sfx_gate_unlock(); sfx_reward(); }
+                        if (item_held(IT_LENS)) { draw_dialog_lines(64); sfx_talk(); }
+                        else if (!item_held(IT_IDOL)) { draw_dialog_lines(70); sfx_talk(); }
+                        else { g_items = (uint32_t)(g_items & (uint32_t)~(1UL << IT_IDOL)); g_items = (uint32_t)(g_items | (1 << IT_LENS)); draw_dialog_lines(63); sfx_gate_unlock(); sfx_reward(); }
                     } else if (e->aux >= 5) {
                         /* v8 mechanisms 5-9 (table-driven): item,
                          * locked / reward / already dialogs. Aux 8
@@ -2349,9 +2301,9 @@ void main(void) {
                          * the organs are synced but the Vein
                          * Organ is missing. */
                         static const uint8_t MECH_ITEM[5] = {IT_LUNG, IT_SILVER, IT_HEARTSEAL, IT_HEARTKEY, IT_NINTH};
-                        static const uint8_t MECH_LOCK[5] = {105, 110, 116, 121, 125};
-                        static const uint8_t MECH_REW[5] = {107, 112, 118, 124, 126};
-                        static const uint8_t MECH_ALR[5] = {106, 111, 111, 111, 126};
+                        static const uint8_t MECH_LOCK[5] = {81, 86, 92, 96, 99};
+                        static const uint8_t MECH_REW[5] = {83, 88, 93, 98, 100};
+                        static const uint8_t MECH_ALR[5] = {82, 87, 87, 87, 100};
                         uint8_t mi = (uint8_t)(e->aux - 5);
                         uint8_t ok = 0;
                         if (e->aux == 5) ok = wind_done;
@@ -2360,16 +2312,16 @@ void main(void) {
                         else if (e->aux == 8) ok = organ_done && item_held(IT_ORGAN);
                         else ok = item_held(IT_SIGIL) && item_held(IT_SILVER) && item_held(IT_HEARTSEAL) && item_held(IT_FRAGMENT) && item_held(IT_RIVER) && item_held(IT_THREAD);
                         if (item_held(MECH_ITEM[mi])) { draw_dialog_lines(MECH_ALR[mi]); sfx_talk(); }
-                        else if (!ok) { draw_dialog_lines((e->aux == 8 && organ_done) ? 122 : MECH_LOCK[mi]); sfx_talk(); }
+                        else if (!ok) { draw_dialog_lines((e->aux == 8 && organ_done) ? 97 : MECH_LOCK[mi]); sfx_talk(); }
                         else { g_items = (uint32_t)(g_items | (1UL << MECH_ITEM[mi])); draw_dialog_lines(MECH_REW[mi]); sfx_gate_unlock(); sfx_reward(); }
                     }
                 } else if (e->kind == ENT_TOWER) {
-                    if (item_held(IT_LANTERN)) { draw_dialog_lines(21); sfx_talk(); }
-                    else if (!bell_done) { draw_dialog_lines(19); sfx_talk(); }
-                    else { g_items = (uint32_t)(g_items | (1 << IT_LANTERN)); draw_dialog_lines(20); sfx_gate_unlock(); sfx_reward(); }
+                    if (item_held(IT_LANTERN)) { draw_dialog_lines(16); sfx_talk(); }
+                    else if (!bell_done) { draw_dialog_lines(14); sfx_talk(); }
+                    else { g_items = (uint32_t)(g_items | (1 << IT_LANTERN)); draw_dialog_lines(15); sfx_gate_unlock(); sfx_reward(); }
                 } else if (e->kind == ENT_EPITAPH) {
-                    if (!item_held(IT_LANTERN)) { draw_dialog_lines(22); sfx_talk(); }
-                    else { epitaph_read = 1; draw_dialog_lines(23); sfx_talk(); }
+                    if (!item_held(IT_LANTERN)) { draw_dialog_lines(17); sfx_talk(); }
+                    else { epitaph_read = 1; draw_dialog_lines(18); sfx_talk(); }
                 }
             }
         } else {
@@ -2500,11 +2452,11 @@ void main(void) {
                      * into the Forest of Veins (facing kept,
                      * destination = Forest return gate + D). */
                     if (!item_held(IT_GRAVE1) || !item_held(IT_GRAVE2) || !item_held(IT_GRAVE3)) {
-                        state = ST_TALK; ch_count = 0; draw_dialog_lines(25);
+                        state = ST_TALK; ch_count = 0; draw_dialog_lines(20);
                     } else if (!coffins_solved()) {
-                        state = ST_TALK; ch_count = 0; draw_dialog_lines(26);
+                        state = ST_TALK; ch_count = 0; draw_dialog_lines(21);
                     } else if (!epitaph_read) {
-                        state = ST_TALK; ch_count = 0; draw_dialog_lines(27);
+                        state = ST_TALK; ch_count = 0; draw_dialog_lines(22);
                     } else if (!crypt_open) {
                         code_digit[0] = 0; code_digit[1] = 0; code_digit[2] = 0;
                         code_cursor = 0; code_wrong = 0;

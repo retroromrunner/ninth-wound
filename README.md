@@ -33,13 +33,16 @@ The crypt door needs a code — the epitaph in the Burial Maze holds it. When yo
 
 One long descent, connected gate to gate:
 
-1. **The Gatehouse** → 2. **Ash Village** → 3. **Burial Maze** → 4. **Forest of Veins** → 5. **Cathedral of Teeth** → 6. **Blood River** → 7. **Flesh Market** → 8. **Lung Gardens** → 9. **Bone Labyrinth** → 10. **Memory Vault** → 11. **Heart Chamber** → 12. **Throne of the Sleeper**
+1. **The Gatehouse** → 2. **Ash Village** → 3. **Burial Maze** → 4. **Forest of Veins** → 5. **Cathedral of Teeth** → 6. **Blood River** → 7. **Flesh Market** →
+ 8. **Lung Gardens** → 9. **Bone Labyrinth** → 10. **Memory Vault** → 11. **Heart Chamber** → 12. **Throne of the Sleeper**
 
 And the journey doubles back on itself, too:
 
 - A chamber in the **Forest of Veins** stays locked until you carry the Bone Tuning Fork — inside it waits the Vein Organ, needed in the Heart Chamber.
 - A chamber in the **Cathedral of Teeth** stays locked until you carry the Lung Bellows — inside it waits the Binding Thread, needed to forge the final key.
 - A merchant in the **Flesh Market** will trade a Market Key only for gold found in the Bone Labyrinth — and that key, together with the Heart Key, opens the gate to the Throne.
+
+The deeper you go, the less the world opens up and the more it winds. The Flesh Market keeps its open stalls, but its rarest goods hide in a small maze off to one side — you have to work your way in to find them. The Memory Vault winds through long corridors before opening into a wide central plaza. The Heart Chamber is one long, narrow passage that seems to go on forever, with hints along the way. The Lung Gardens spiral inward toward their heart, and the Bone Labyrinth — true to its name — is a proper maze.
 
 ## Items and relics
 
